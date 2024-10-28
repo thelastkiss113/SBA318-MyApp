@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade Management</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Optional: Link to your CSS -->
+</head>
+<body>
+    <h1>Grade Management</h1>
+    
+    <div>
+        <h2>Fetch Grade</h2>
+        <input type="number" id="fetchId" placeholder="Enter grade ID" />
+        <button id="fetchGradeBtn">Fetch Grade</button>
+    </div>
+    
+    <h2>Grade Details</h2>
+    <table id="gradeTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Grade</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td id="gradeId"></td>
+                <td id="gradeValue"></td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <div>
+        <h2>Add Grade</h2>
+        <input type="text" id="newGrade" placeholder="Enter new grade" />
+        <button id="addGradeBtn">Add Grade</button>
+    </div>
+
+    <script src="script.js"></script> <!-- Link to your JavaScript -->
+</body>
+</html>
