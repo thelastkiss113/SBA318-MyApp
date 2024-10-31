@@ -1,53 +1,69 @@
+//routes/grades.js
 const express = require('express');
 const router = express.Router();
+const mongoose = require('mongoose');
 
-// Sample in-memory data structure to store grades
-let grades = [
-    { id: 1, grade: "A" },
-    { id: 2, grade: "B" }
-];
+// Define the Grade schema
+const gradeSchema = new mongoose.Schema({
+    name: String,
+    score: Number
+});
+
+// Create the Grade model
+const Grade = mongoose.model('Grade', gradeSchema);
 
 // GET all grades
-router.get('/', (req, res) => {
-    res.status(200).json(grades);
+router.get('/', async (req, res) => {
+    try {
+        const grades = await Grade.find();
+        res.json(grades);
+    } catch (error) {
+        res.status(500).send('Server Error');
+    }
+});
+
+// GET a grade by ID
+router.get('/:id', async (req, res) => {
+    try {
+        const grade = await Grade.findById(req.params.id);
+        if (!grade) return res.status(404).send('Grade not found');
+        res.json(grade);
+    } catch (error) {
+        res.status(500).send('Server Error');
+    }
 });
 
 // POST a new grade
-router.post('/', (req, res) => {
-    const { grade } = req.body; // Expecting the new grade in the request body
-    const newGrade = {
-        id: grades.length + 1, // Auto-increment ID
-        grade: grade
-    };
-    grades.push(newGrade);
-    res.status(201).json(newGrade);
+router.post('/', async (req, res) => {
+    try {
+        const newGrade = new Grade(req.body);
+        const savedGrade = await newGrade.save();
+        res.status(201).json(savedGrade);
+    } catch (error) {
+        res.status(400).send('Bad Request');
+    }
 });
 
-// PUT to update an existing grade
-router.put('/:id', (req, res) => {
-    const { id } = req.params;
-    const { grade } = req.body;
-
-    const gradeIndex = grades.findIndex(g => g.id === parseInt(id));
-    if (gradeIndex === -1) {
-        return res.status(404).json({ message: 'Grade not found' });
+// PATCH a grade by ID
+router.patch('/:id', async (req, res) => {
+    try {
+        const updatedGrade = await Grade.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        if (!updatedGrade) return res.status(404).send('Grade not found');
+        res.json(updatedGrade);
+    } catch (error) {
+        res.status(400).send('Bad Request');
     }
-
-    grades[gradeIndex].grade = grade;
-    res.status(200).json(grades[gradeIndex]);
 });
 
-// DELETE a grade
-router.delete('/:id', (req, res) => {
-    const { id } = req.params;
-    const gradeIndex = grades.findIndex(g => g.id === parseInt(id));
-    
-    if (gradeIndex === -1) {
-        return res.status(404).json({ message: 'Grade not found' });
+// DELETE a grade by ID
+router.delete('/:id', async (req, res) => {
+    try {
+        const deletedGrade = await Grade.findByIdAndDelete(req.params.id);
+        if (!deletedGrade) return res.status(404).send('Grade not found');
+        res.json(deletedGrade);
+    } catch (error) {
+        res.status(500).send('Server Error');
     }
-
-    const deletedGrade = grades.splice(gradeIndex, 1);
-    res.status(204).json(deletedGrade);
 });
 
 module.exports = router;

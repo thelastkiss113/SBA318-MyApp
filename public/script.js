@@ -1,12 +1,13 @@
+//public/script.js
 // Fetch all grades when the page loads
 fetch('/api/grades')
     .then(response => response.json())
     .then(data => {
-        const gradesDiv = document.getElementById('gradesTable');
+        const gradesDiv = document.getElementById('gradeTable'); // Corrected ID
         gradesDiv.innerHTML = data.map(grade => `
             <tr>
                 <td>${grade._id}</td>
-                <td>${grade.scores.map(score => `${score.type}: ${score.score}`).join(', ')}</td>
+                <td>${grade.score}</td>
                 <td><button onclick="deleteGrade('${grade._id}')">Delete</button></td>
             </tr>
         `).join('');
@@ -15,7 +16,7 @@ fetch('/api/grades')
 
 // Function to fetch a specific grade by ID
 document.getElementById('fetchGradeBtn').addEventListener('click', function() {
-    const gradeId = document.getElementById('fetchGradeId').value; // Get the value from the input field
+    const gradeId = document.getElementById('fetchId').value; // Corrected ID
     fetch(`/api/grades/${gradeId}`) // Fetch the grade by ID
         .then(response => {
             if (!response.ok) {
@@ -24,15 +25,14 @@ document.getElementById('fetchGradeBtn').addEventListener('click', function() {
             return response.json();
         })
         .then(grade => {
-            console.log(grade); // Log the fetched grade for debugging
-            const gradesDiv = document.getElementById('gradesTable');
+            const gradesDiv = document.getElementById('gradeTable'); // Consistent ID
             // Clear previous results
             gradesDiv.innerHTML = '';
             // Display the fetched grade
             gradesDiv.innerHTML += `
                 <tr>
                     <td>${grade._id}</td>
-                    <td>${grade.scores.map(score => `${score.type}: ${score.score}`).join(', ')}</td>
+                    <td>${grade.score}</td>
                     <td><button onclick="deleteGrade('${grade._id}')">Delete</button></td>
                 </tr>`;
         })
@@ -47,7 +47,7 @@ function deleteGrade(gradeId) {
                 throw new Error('Error deleting grade');
             }
             // Remove the grade from the displayed list after deletion
-            const gradesDiv = document.getElementById('gradesTable');
+            const gradesDiv = document.getElementById('gradeTable');
             gradesDiv.innerHTML = gradesDiv.innerHTML.replace(/<tr[^>]*>([^<]*)<td[^>]*>([^<]*)<\/td>.*?<\/tr>/, '');
         })
         .catch(error => console.error('Error deleting grade:', error));

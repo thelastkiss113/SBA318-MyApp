@@ -1,29 +1,35 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const app = express();
-const PORT = 3000;
+import express from 'express';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
 
-app.use(express.json());
-app.use(express.static('public')); // Serve static files from the public directory
+
+dotenv.config(); // Load environment variables
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+app.use(express.static('public'));
+
+// Set Mongoose strictQuery option to suppress the warning
+mongoose.set('strictQuery', false);
 
 // MongoDB connection
-mongoose.connect('mongodb://localhost:27017/sample_trainings', {
-    // No need for useNewUrlParser and useUnifiedTopology
+mongoose.connect(process.env.ATLAS_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
 })
-.then(() => console.log('MongoDB Connected'))
-.catch(err => console.error('MongoDB connection error:', err));
+.then(() => {
+  console.log('MongoDB Connected');
+})
+.catch((error) => {
+  console.error('MongoDB connection error:', error);
+});
 
-// Routes
+// Basic route
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/public/index.html');
+  res.send('Server is running!');
 });
 
-// Sample API route
-app.get('/api/grades', (req, res) => {
-    // Replace with your actual logic to retrieve grades
-    res.json([{ id: 1, grade: 'A' }, { id: 2, grade: 'B' }]);
-});
-
+// Start the server
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is running on http://localhost:${PORT}`);
 });

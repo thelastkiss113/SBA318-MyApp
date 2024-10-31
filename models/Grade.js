@@ -1,8 +1,11 @@
+// models/Grade.js
 const mongoose = require('mongoose');
 
-const GradeSchema = new mongoose.Schema({
+const gradeSchema = new mongoose.Schema({
     name: { type: String, required: true },
     score: { type: Number, required: true }
 });
 
-module.exports = mongoose.model('Grade', GradeSchema);
+const Grade = mongoose.model('Grade', gradeSchema);
+
+module.exports = Grade;

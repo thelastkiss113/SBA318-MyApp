@@ -1,43 +1,52 @@
+<!-- index.html -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grade Management</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Grade Fetcher</title>
 </head>
 <body>
-    <h1>Grade Management</h1>
-    
-    <div>
-        <h2>Fetch Grade</h2>
-        <input type="text" id="fetchId" placeholder="Enter grade ID" />
-        <button id="fetchGradeBtn">Fetch Grade</button>
-    </div>
-    
-    <h2>Grade Details</h2>
-    <table id="gradeTable">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Scores</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td id="gradeId"></td>
-                <td id="gradeValue"></td>
-            </tr>
-        </tbody>
-    </table>
-    
-    <div>
-        <h2>Add Grade</h2>
-        <input type="text" id="newGrade" placeholder="Enter new grade" />
-        <button id="addGradeBtn">Add Grade</button>
-    </div>
+    <h1>Fetch Grade by ID</h1>
+    <input type="text" id="id-input" placeholder="Enter MongoDB ObjectId" />
+    <button id="fetch-button">Fetch Grade</button>
+    <div id="grade-container"></div>
 
-    <script src="script.js"></script>
+    <script>
+        document.getElementById('fetch-button').addEventListener('click', async () => {
+            const id = document.getElementById('id-input').value.trim(); // Get the ObjectId from input
+            if (!id) {
+                alert('Please enter a valid ObjectId'); // Alert if input is empty
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/grades/${id}`); // Fetch grade by ID
+                if (!response.ok) throw new Error('Network response was not ok');
+
+                const grade = await response.json(); // Parse JSON
+                displayGrade(grade); // Call function to display the grade
+            } catch (error) {
+                console.error('Error fetching grade:', error); // Log any errors
+                alert('Error fetching grade. Please check the console for details.');
+            }
+        });
+
+        function displayGrade(grade) {
+            const container = document.getElementById('grade-container');
+            container.innerHTML = ''; // Clear previous results
+
+            if (!grade) {
+                container.innerHTML = '<p>No grade found.</p>'; // Display message if no grade
+                return;
+            }
+
+            const p = document.createElement('p'); // Create paragraph to display grade
+            p.textContent = `ID: ${grade._id}, Name: ${grade.name}, Score: ${grade.score}`;
+            container.appendChild(p); // Append paragraph to container
+        }
+    </script>
 </body>
 </html>
 
